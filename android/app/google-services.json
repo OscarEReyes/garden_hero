@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "974025475462",
+    "firebase_url": "https://gardenhero-f7245.firebaseio.com",
+    "project_id": "gardenhero-f7245",
+    "storage_bucket": "gardenhero-f7245.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974025475462:android:c62423d9718a9d89",
+        "android_client_info": {
+          "package_name": "com.gardenheroes.gardenhero"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "974025475462-9u6a8slavb2dp7vqe43fomteoudougnv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gardenheroes.gardenhero",
+            "certificate_hash": "d5e617660874e86024272840a567b02c1b0831ce"
+          }
+        },
+        {
+          "client_id": "974025475462-i8l8gaqkuji31diq9kqp8vdsfou5vkfm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSBQ7TiVS-kcI-_ok84_a_DmMuUG2sHFU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "974025475462-i8l8gaqkuji31diq9kqp8vdsfou5vkfm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.GardenHero.gardenhero;
+package com.gardenheroes.gardenhero;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
