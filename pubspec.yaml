@@ -23,6 +23,9 @@ dependencies:
   google_sign_in: "3.0.3"
   cloud_firestore: ^0.8.2+1
   csv: ^4.0.0
+  carousel_slider: ^0.0.7
+  rxdart: ^0.20.0
+
 
 dev_dependencies:
   flutter_test:

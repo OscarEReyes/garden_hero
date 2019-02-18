@@ -11,8 +11,8 @@ class NavBar extends StatelessWidget {
       items: [
         //0xe804 profile icon code.
         _buildNavigationBarItem(
-         const IconData(0xe8b6, fontFamily: 'MaterialIcons'),
-          "Search", 
+         Icons.nature,
+          "Garden", 
           color
         ),
         _buildNavigationBarItem(

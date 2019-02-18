@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:garden_hero/blocs/bloc_provider.dart';
+import 'package:garden_hero/blocs/garden_list_bloc.dart';
 import 'package:garden_hero/dashboard/screens/dashboard_rename.dart';
+import 'package:garden_hero/pages/garden_list_page.dart';
 import '../api.dart';
 
 import 'dart:async';
@@ -20,6 +23,21 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth.instance.currentUser().then(
+            (FirebaseUser user) async {
+          if (user != null) {
+            Navigator.of(context)
+                .pushReplacement(MaterialPageRoute(builder: (context)
+                  => BlocProvider(
+                    bloc: GardenListBloc(user),
+                    child: GardenListPage(),
+                  )
+                  )
+                );
+          }
+        }
+    );
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -52,9 +70,8 @@ class LoginPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      Text(
-                        "Login to the App!",
-                        style: TextStyle(
+                      Text("Login to the App!",
+                        style: const TextStyle(
                           color: Colors.black54,
                           fontSize: 30.0,
                           fontWeight: FontWeight.w600,
@@ -67,8 +84,13 @@ class LoginPage extends StatelessWidget {
 
                           b
                             ? await checkUser(context)
-                              .then((value) => Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) => DashboardPage(value))
+                              .then((user) => Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(builder: (context)
+                                  => BlocProvider(
+                                    bloc: GardenListBloc(user),
+                                    child: GardenListPage(),
+                                  )
+                                )
                               )
                             )
                             : Scaffold.of(context).showSnackBar(
@@ -93,81 +115,7 @@ class LoginPage extends StatelessWidget {
 
   Future<FirebaseUser> checkUser(BuildContext context) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-
-    final QuerySnapshot results = await Firestore.instance.collection("users")
-      .where("email", isEqualTo: currentUser.email)
-      .limit(1)
-      .getDocuments();
-    print("query done");
-
-    print(results.documents.length);
-
-    if (results.documents.length == 0 || 
-      results.documents[0].data["zipcode"] == null || 
-      results.documents[0].data["radius"] == null) {
-      await _askForUserData(context, currentUser);
-    }
-
     return currentUser;
     
-  }
-
-  Future<Null> _askForUserData(BuildContext context, FirebaseUser user) async {
-    TextEditingController zipCodeController = TextEditingController();
-    TextEditingController ageController = TextEditingController();
-
-
-    return showDialog<Null>(
-      context: context,
-      barrierDismissible: false, 
-      builder: (BuildContext context) {
-        return  AlertDialog(
-          title:  Text('Please input the following data:'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: "Zip Code"
-                  ),
-                  keyboardType: TextInputType.number,
-                  maxLength: 5,
-                  maxLengthEnforced: true,
-                  controller: zipCodeController,
-                ),
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: "Age"
-                  ),
-                  keyboardType: TextInputType.number,
-                  maxLength: 2,
-                  maxLengthEnforced: true,
-                  controller: ageController,
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-          FlatButton(
-              child: Text('Accept'),
-              onPressed: () {
-                if (zipCodeController.text.length == 5 && ageController.text.length == 2) {
-                  DocumentReference document = Firestore.instance.collection("users").document(user.email.hashCode.toString());
-                  document.setData(
-                    { 
-                      "name" : user.displayName,
-                      "email" : user.email,
-                      "zipcode" : zipCodeController.text,
-                      "age" : ageController.text,
-                    }
-                  );
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }
