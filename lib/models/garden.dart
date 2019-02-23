@@ -34,5 +34,4 @@ class Garden {
 
     return data;
   }
-
 }

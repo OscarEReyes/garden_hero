@@ -27,7 +27,7 @@ class GardenListBody extends StatelessWidget {
 
     return Center(
       child: Container(
-        padding: const EdgeInsets.only(top: 25.0),
+        padding: const EdgeInsets.only(top: 10.0),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -54,7 +54,7 @@ class GardenListBody extends StatelessWidget {
 
   Widget _buildList(BuildContext context, GardenListBloc gardenListBloc, AsyncSnapshot<QuerySnapshot> snapshot) {
     return ListView.builder(
-      padding: const EdgeInsets.all(0),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return _buildGardenWidget(context, gardenListBloc, snapshot, index);
@@ -68,98 +68,104 @@ class GardenListBody extends StatelessWidget {
   Widget _buildGardenWidget(BuildContext context, GardenListBloc gardenListBloc, AsyncSnapshot<QuerySnapshot> snapshot, int index) {
     Garden garden = Garden.fromMap(snapshot.data.documents[index].data);
 
-    return Dismissible(
-      direction: DismissDirection.endToStart,
-      dismissThresholds: {
-        DismissDirection.endToStart : 0.7
-      },
-      background: stackBehindDismiss(),
-      key: ObjectKey(snapshot.data.documents[index]),
-      child: Container(
-        child: GestureDetector(
-          onLongPress: () {
-            gardenListBloc.inRemoveGarden.add(garden);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Dismissible(
+          direction: DismissDirection.endToStart,
+          dismissThresholds: {
+            DismissDirection.endToStart : 0.7
           },
+          background: stackBehindDismiss(),
+          key: ObjectKey(snapshot.data.documents[index]),
           child: Card(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 10.0
-              ),
+            elevation: 4.0,
+            child: InkWell(
+	            onTap: () {
+		            print("tapped");
+	            },
               child: ListTile(
-                title: Row (
-                  children: <Widget>[
-                    Text(garden.name,
-                      style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w600
-                      ),
-                    ),
-                    Expanded(
-                      child: LimitedBox(),
-                      flex: 1,
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      color: Colors.black54,
-                      onPressed: () async {
-                          Map<String, String> data = await showDialog(
-                            context: context,
-                            builder: (context) => NewGardenDialog(garden.name, garden.description),
-                          );
-                          gardenListBloc.inGardenToEdit.add(garden);
-                          gardenListBloc.inEditGarden.add(data);
-                      },
-                    ),
-                  ],
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(garden.description,
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text("Count: " + garden.count.toString(),
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w400
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                title: _buildGardenName(context, garden, gardenListBloc),
+                subtitle: _buildGardenInfo(garden)
               ),
             ),
           ),
+          onDismissed: (direction) {
+            gardenListBloc.inRemoveGarden.add(garden);
+          },
         ),
-      ),
-      onDismissed: (direction) {
-        gardenListBloc.inRemoveGarden.add(garden);
-      },
     );
   }
 
+  Widget _buildGardenName(BuildContext context, Garden garden, GardenListBloc gardenListBloc) {
+  	return Row (
+		  children: <Widget>[
+			  Text(garden.name,
+				  style: TextStyle(
+						  fontSize: 24.0,
+						  fontWeight: FontWeight.w600
+				  ),
+			  ),
+			  Expanded(
+				  child: LimitedBox(),
+				  flex: 1,
+			  ),
+			  IconButton(
+				  icon: Icon(Icons.edit),
+				  color: Colors.black54,
+				  onPressed: () async {
+					  Map<String, String> data = await showDialog(
+						  context: context,
+						  builder: (context) => NewGardenDialog(garden.name, garden.description),
+					  );
+					  gardenListBloc.inGardenToEdit.add(garden);
+					  gardenListBloc.inEditGarden.add(data);
+				  },
+			  ),
+		  ],
+	  );
+  }
+
+  Widget _buildGardenInfo(Garden garden) {
+  	return Padding(
+			  padding: const EdgeInsets.symmetric(vertical: 8.0),
+		    child: Column(
+		      crossAxisAlignment: CrossAxisAlignment.start,
+		      children: <Widget>[
+		        Text(garden.description,
+		          style: TextStyle(
+							  fontSize: 16.0,
+							  fontWeight: FontWeight.w400
+							  ),
+		        ),
+					  Padding(
+						  padding: const EdgeInsets.symmetric(vertical: 8.0),
+						  child: Text("Count: " + garden.count.toString(),
+							  style: TextStyle(
+								  fontSize: 16.0,
+								  fontWeight: FontWeight.w400
+							  ),
+						  ),
+					  )
+			  ]
+	  )
+	  );
+  }
+
   Widget _buildIconButton(BuildContext context, GardenListBloc templateBloc) {
-    return IconButton(
-        icon: const Icon(
-          Icons.add,
-          color: Colors.black,
-        ),
-        onPressed: () async {
-          Map<String, String> data = await showDialog(
-            context: context,
-            builder: (context) => NewGardenDialog("", ""),
-          );
-          templateBloc.inAddGarden.add(data);
-        }
+    return Container(
+      child: IconButton(
+          icon: const Icon(
+            Icons.add,
+            color: Colors.black,
+          ),
+          onPressed: () async {
+            Map<String, String> data = await showDialog(
+              context: context,
+              builder: (context) => NewGardenDialog("", ""),
+            );
+            templateBloc.inAddGarden.add(data);
+          }
+      ),
     );
   }
 
