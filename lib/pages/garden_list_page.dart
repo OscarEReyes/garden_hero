@@ -4,6 +4,7 @@ import 'package:garden_hero/blocs/bloc_provider.dart';
 import 'package:garden_hero/blocs/garden_list_bloc.dart';
 import 'package:garden_hero/dialogs/new_garden_dialog.dart';
 import 'package:garden_hero/models/garden.dart';
+import 'package:garden_hero/garden/screens/plant_list_page.dart';
 
 class GardenListPage extends StatelessWidget {
   GardenListPage();
@@ -79,9 +80,14 @@ class GardenListBody extends StatelessWidget {
           key: ObjectKey(snapshot.data.documents[index]),
           child: Card(
             elevation: 4.0,
-            child: InkWell(
+            child: GestureDetector(
 	            onTap: () {
-		            print("tapped");
+	              print(garden.id+" is tapped");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => new PlantListPage(gardenId: garden.id,)),
+                );
+
 	            },
               child: ListTile(
                 title: _buildGardenName(context, garden, gardenListBloc),

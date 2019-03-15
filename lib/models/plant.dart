@@ -1,38 +1,29 @@
 class Plant {
-	String name;
+	String type;
 	String description;
-	int count;
-	int planted;
-	int germinated
-g	String user;
-	String id;
+	String phase;
+	bool watered;
+	bool diseased;
 
-
-	Plant(this.name, this.description, this.user) {
-		this.count = 0;
-	}
+	Plant({this.description,this.type,this.phase});
 
 	Plant.fromMap(Map<String, dynamic> data) {
-		this.name = data["name"];
-		this.description = data["description"];
-		this.count = data["count"];
-		this.user = data["user"];
-		if (data["id"] != null) {
-			this.id = data["id"];
-		}
+		this.type = data["type"];
+		this.phase = data["phase"];
+		this.watered = data["watered"];
+		this.diseased = data["diseased"];
+
 	}
 
 	Map<String, dynamic> toMap() {
 		Map<String, dynamic> data =  {
-			"name" : name,
+			"name" : type,
 			"description" : description,
-			"count" : count,
-			"user" : user
-		};
+			"phase": phase,
+			"watered": watered,
+			"diseased": diseased
 
-		if (id != null) {
-			data["id"] = id;
-		}
+		};
 
 		return data;
 	}
