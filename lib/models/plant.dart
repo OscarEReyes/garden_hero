@@ -1,10 +1,9 @@
 class Plant {
 	String name;
 	String description;
-	int count;
 	int planted;
-	int germinated
-g	String user;
+	int dead; 
+	String user;
 	String id;
 
 
