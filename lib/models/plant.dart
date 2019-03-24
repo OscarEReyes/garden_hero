@@ -1,30 +1,48 @@
+import 'package:flutter/material.dart';
+
 class Plant {
-	String type;
-	String description;
-	String phase;
-	bool watered;
-	bool diseased;
+  final String type;
+  String description;
+  final String phase;
+  final bool watered;
+  final bool diseased;
 
-	Plant({this.description,this.type,this.phase});
+  Plant({this.type, this.watered, this.diseased, this.phase});
 
-	Plant.fromMap(Map<String, dynamic> data) {
-		this.type = data["type"];
-		this.phase = data["phase"];
-		this.watered = data["watered"];
-		this.diseased = data["diseased"];
+  String toString() {
+    return type +
+        "\t" +
+        phase +
+        "\twatered: " +
+        watered.toString() +
+        "\tdiseased: " +
+        diseased.toString();
+  }
 
-	}
+  Widget toCard() {
+    return Card(
+      color: watered ? Color(0xFF0BE3E3) : Color(0xFFBF7F3F),
+      elevation: 4.0,
+      child: Text(type +
+          " " +
+          phase +
+          "\nw: " +
+          watered.toString() +
+          " d: " +
+          diseased.toString()),
+    );
+  }
 
-	Map<String, dynamic> toMap() {
-		Map<String, dynamic> data =  {
-			"name" : type,
-			"description" : description,
-			"phase": phase,
-			"watered": watered,
-			"diseased": diseased
+    Map<String, dynamic> toMap() {
+      Map<String, dynamic> data = {
+        "name": type,
+        "description": description,
+        "phase": phase,
+        "watered": watered,
+        "diseased": diseased
+      };
 
-		};
+      return data;
+    }
+  }
 
-		return data;
-	}
-}

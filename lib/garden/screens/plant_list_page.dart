@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:garden_hero/blocs/bloc_provider.dart';
-import 'package:garden_hero/blocs/garden_list_bloc.dart';
+import 'package:garden_hero/dialogs/info_dialog.dart';
+import 'package:garden_hero/models/plant.dart';
 
 class PlantListPage extends StatelessWidget {
   final String gardenId;
@@ -23,7 +23,13 @@ class PlantListPage extends StatelessWidget {
 
 class PlantListBody extends StatelessWidget {
   final String gardenId;
-
+  Map<String, dynamic> plantType;
+  Map<String, dynamic> watered;
+  Map<String, dynamic> diseased;
+  Map<String, dynamic> phase;
+  List<String> keys;
+  int total =0;
+  InfoDialog dialog = new InfoDialog();
   PlantListBody({this.gardenId});
   @override
   Widget build(BuildContext context) {
@@ -41,25 +47,37 @@ class PlantListBody extends StatelessWidget {
                           .snapshots(),
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
-
-                        Map<String, int> plantTypes =
+                      //=========================maps
+                        plantType =
                             Map.from(snapshot.data.documents[0]['plantTypes']);
 
-                        List<String> keys = List.of(plantTypes.keys);
+                       watered  =Map.from(snapshot.data.documents[0]['watered']);
+
+                       diseased  = Map.from(snapshot.data.documents[0]['diseased']);
+
+                       phase = Map.from(snapshot.data.documents[0]['phase']);
+
+                         keys = List.of(plantType.keys);
+                        //all maps have same keys
+
+
                         if (snapshot.hasData) {
+                          _buildList();
                           return GridView.count(
-                            crossAxisCount: 2,
-                            children: List.generate(plantTypes.length, (index) {
-                              return Card(
-                                elevation: 4.0,
-                                  child: Text("type: " + keys[index] + "\tcount: " +
-                                      plantTypes[keys[index]].toString()));
+                              crossAxisCount: 4,
+                            children: List.generate(_buildList().length, (index){
+
+                              return GestureDetector(
+                                child: _buildList()[index].toCard(),
+                                onTap: (){
+                                  dialog.information(context, _buildList()[index].type+" info","static plant information",_buildList()[index].toCard());
+                                },
+                              );
                             }),
                           );
-
                         } else
                           return new Text("Error...");
-                        // return _buildList(context, snapshot,plantListBloc);
+
                       }),
                   flex: 8,
                 ),
@@ -69,22 +87,42 @@ class PlantListBody extends StatelessWidget {
     );
   }
 
- /* Widget _buildList(
-      BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return _buildPlantWidget(context, snapshot, index);
+
+  List<Plant> _buildList () {
+    int total = 0;
+    plantType.forEach((String,V){
+      total += plantType[String];
+    });
+    //print("the total is: "+total.toString());
+    List<Plant> list =new List();
+   for(int i = 0; i<keys.length;i++){
+     String type = keys[i];
+     int numPlant = plantType[type];
+      String ph = phase[type];
+      int numWatered = watered[type];
+      int numDis = diseased[type];
+
+      for(int n=0;n<numPlant;n++){
+      bool watered = n<numWatered?true:false;
+      bool dis = n<numDis?true:false;
+      
+        Plant p = Plant(
+          type: type,
+          phase: ph,
+          watered: watered,
+          diseased: dis
+        );
+        list.add(p);
       }
-    );
+   }
+   this.total = total;
+   return list;
+  /* int i =1;
+    list.forEach((V){
+      print("plant: "+i.toString()+" "+V.toString());
+      i++;
+    });*/
+
+   
   }
-  Widget _buildPlantWidget(AsyncSnapshot<QuerySnapshot> snapshot) {
-    //   Plant plant = Plant.fromMap(snapshot.data.documents[index]);
-    return Card(
-      child: InkWell(
-        child: Text(snapshot.data.documents[0]['plantTypes'][0]),
-      ),
-    );
-  }*/
 }
