@@ -42,27 +42,41 @@ class _NewGardenDialogState extends State<NewGardenDialog> {
     ThemeData theme = Theme.of(context);
 
     return Container(
-      padding: EdgeInsets.only(top: 50.0),
+      padding: EdgeInsets.only(top: 25.0),
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: size.height * 0.45,
+            maxHeight: size.height * 0.5,
             maxWidth: size.width * 0.9
         ),
         child: Card(
-          child: Form(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  const SizedBox(height: 5.0,),
-                  Text("New Garden"),
-                  _buildFieldNameTextField(),
-                  _buildDescriptionTextField(),
-                  _buildAddFieldButton(theme),
-                  const SizedBox(height: 15.0,)
-                ],
+	        color: Colors.transparent,
+          child: Container(
+	          decoration: BoxDecoration(
+			          gradient: LinearGradient(
+					          stops: [0.2, 0.95],
+					          begin: Alignment.topCenter,
+					          end: Alignment.bottomCenter,
+					          colors: [
+						          theme.primaryColor.withOpacity(0.7),
+						          theme.accentColor.withOpacity(0.7)
+					          ]
+			          )
+	          ),
+            child: Form(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    const SizedBox(height: 5.0,),
+                    Text("New Garden", style: theme.textTheme.title.copyWith(color: Colors.white),),
+                    NameField(_nameController, _newGardenBloc),
+                    DescriptionField(_descriptionController, _newGardenBloc),
+                    _buildAddFieldButton(theme),
+                    const SizedBox(height: 15.0,)
+                  ],
+                ),
               ),
             ),
           ),
@@ -70,57 +84,6 @@ class _NewGardenDialogState extends State<NewGardenDialog> {
       ),
     );
   }
-
-  _buildFieldNameTextField() {
-    return StreamBuilder<String>(
-        stream: _newGardenBloc.name,
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _nameController,
-              keyboardType: TextInputType.text,
-              onChanged: _newGardenBloc.onNameChanged,
-              decoration: InputDecoration(
-                errorText: snapshot.error,
-                labelText: 'Name',
-                labelStyle: Theme.of(context).textTheme.subhead,
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
-  _buildDescriptionTextField() {
-    return StreamBuilder<String>(
-        stream: _newGardenBloc.description,
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _descriptionController,
-              keyboardType: TextInputType.text,
-              onChanged: _newGardenBloc.onDescriptionChanged,
-              decoration: InputDecoration(
-                errorText: snapshot.error,
-                labelText: 'Description',
-                labelStyle: Theme.of(context).textTheme.subhead,
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
   _buildAddFieldButton(ThemeData data) {
     return StreamBuilder<bool>(
         stream: _newGardenBloc.fieldValid,
@@ -145,3 +108,77 @@ class _NewGardenDialogState extends State<NewGardenDialog> {
         });
   }
 }
+
+class NameField extends StatelessWidget {
+	final NewGardenBloc _bloc;
+	final TextEditingController _controller;
+
+	NameField(this._controller, this._bloc);
+
+  @override
+  Widget build(BuildContext context) {
+  	ThemeData theme = Theme.of(context);
+	  return StreamBuilder<String>(
+			  stream: _bloc.name,
+			  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+				  return Padding(
+					  padding: const EdgeInsets.all(8.0),
+					  child: TextField(
+						  controller: _controller,
+						  keyboardType: TextInputType.text,
+						  onChanged: _bloc.onNameChanged,
+						  style: theme.textTheme.subtitle.copyWith(color: Colors.white),
+						  decoration: InputDecoration(
+							  errorText: snapshot.error,
+							  labelText: 'Name',
+							  labelStyle: Theme.of(context).textTheme.subhead
+									  .copyWith(color: theme.accentColor),
+							  enabledBorder: UnderlineInputBorder(
+								  borderSide: BorderSide(
+									  color: Theme.of(context).accentColor,
+								  ),
+							  ),
+						  ),
+					  ),
+				  );
+			  });
+  }
+}
+
+class DescriptionField extends StatelessWidget {
+	final NewGardenBloc _bloc;
+	final TextEditingController _controller;
+
+	DescriptionField(this._controller, this._bloc);
+
+  @override
+  Widget build(BuildContext context) {
+  	ThemeData theme = Theme.of(context);
+
+	  return StreamBuilder<String>(
+			  stream: _bloc.description,
+			  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+				  return Padding(
+					  padding: const EdgeInsets.all(8.0),
+					  child: TextField(
+						  controller: _controller,
+						  keyboardType: TextInputType.text,
+						  onChanged: _bloc.onDescriptionChanged,
+						  style: theme.textTheme.subtitle.copyWith(color: Colors.white),
+						  decoration: InputDecoration(
+							  errorText: snapshot.error,
+							  labelText: 'Description',
+							  labelStyle: Theme.of(context).textTheme.subhead
+									  .copyWith(color: theme.accentColor),
+							  enabledBorder: UnderlineInputBorder(
+								  borderSide: BorderSide(
+									  color: Theme.of(context).primaryColor,
+								  ),
+							  ),
+						  ),
+					  ),
+				  );
+			  });
+  }
+}
+

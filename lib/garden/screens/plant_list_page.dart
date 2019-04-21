@@ -28,83 +28,80 @@ class PlantListBody extends StatelessWidget {
   Map<String, dynamic> diseased;
   Map<String, dynamic> phase;
   List<String> keys;
-  int total =0;
+  int total = 0;
   InfoDialog dialog = new InfoDialog();
   PlantListBody({this.gardenId});
   @override
   Widget build(BuildContext context) {
 
-    return  Center(
-          child: Container(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                      stream: Firestore.instance
-                          .collection("plants")
-                          .where("garden", isEqualTo: gardenId)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                      //=========================maps
-                        plantType =
-                            Map.from(snapshot.data.documents[0]['plantTypes']);
-
-                       watered  =Map.from(snapshot.data.documents[0]['watered']);
-
-                       diseased  = Map.from(snapshot.data.documents[0]['diseased']);
-
-                       phase = Map.from(snapshot.data.documents[0]['phase']);
-
-                         keys = List.of(plantType.keys);
-                        //all maps have same keys
-
-
-                        if (snapshot.hasData) {
-                          _buildList();
-                          return GridView.count(
-                              crossAxisCount: 4,
-                            children: List.generate(_buildList().length, (index){
-
-                              return GestureDetector(
-                                child: _buildList()[index].toCard(),
-                                onTap: (){
-                                  dialog.information(context, _buildList()[index].type+" info","static plant information",_buildList()[index].toCard());
-                                },
-                              );
-                            }),
+    return  Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: Firestore.instance
+                  .collection("plants")
+                  .where("garden", isEqualTo: gardenId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                //all maps have same keys
+                if (snapshot.hasData) {
+                  plantType = Map.from(snapshot.data.documents[0]['plantTypes'] ?? {} ) ;
+                  watered = Map.from(snapshot.data.documents[0]['watered'] ?? {});
+                  diseased = Map.from(snapshot.data.documents[0]['diseased'] ?? {});
+                  phase = Map.from(snapshot.data.documents[0]['phase'] ?? {});
+                  keys = List.of(plantType.keys);
+                  List<Plant> plants = _buildList();
+                  return GridView.count(
+                      crossAxisCount: 4,
+                    children: List.generate(plants.length, (index){
+											Plant plant = plants[index];
+                      return GestureDetector(
+                        child: plant.toCard(),
+                        onTap: (){
+                          dialog.information(context,
+	                            plant.type + " info","static plant information",
+	                            plant.toCard()
                           );
-                        } else
-                          return new Text("Error...");
+                        },
+                      );
+                    }),
+                  );
+                } else
+                  return new Text("Error...");
 
-                      }),
-                  flex: 8,
-                ),
-              ],
-            ),
+              }),
+            flex: 8,
           ),
+        ],
+      ),
     );
   }
 
 
   List<Plant> _buildList () {
     int total = 0;
-    plantType.forEach((String,V){
-      total += plantType[String];
-    });
+
+    plantType.forEach(
+	    (string,V){
+	      total += plantType[string];
+	    });
     //print("the total is: "+total.toString());
-    List<Plant> list =new List();
-   for(int i = 0; i<keys.length;i++){
-     String type = keys[i];
-     int numPlant = plantType[type];
+
+    List<Plant> list = [];
+
+    for (int i = 0; i < keys.length; i++){
+      String type = keys[i];
       String ph = phase[type];
+      int numPlant = plantType[type];
       int numWatered = watered[type];
       int numDis = diseased[type];
 
-      for(int n=0;n<numPlant;n++){
-      bool watered = n<numWatered?true:false;
-      bool dis = n<numDis?true:false;
+      for (int n=0; n<numPlant; n++){
+	      bool watered = n<numWatered?true:false;
+	      bool dis = n<numDis?true:false;
       
         Plant p = Plant(
           type: type,
@@ -122,7 +119,5 @@ class PlantListBody extends StatelessWidget {
       print("plant: "+i.toString()+" "+V.toString());
       i++;
     });*/
-
-   
   }
 }

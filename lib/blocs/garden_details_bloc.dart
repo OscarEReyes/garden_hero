@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 class GardenDetailsBloc implements BlocBase {
 	final FirebaseUser user;
 	Garden _gardenToEdit;
+	Garden _deletedGarden;
 	final Set<Garden> _gardens = Set<Garden>();
 
 	GardenDetailsBloc(this.user) {
