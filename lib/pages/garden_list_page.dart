@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:garden_hero/blocs/bloc_provider.dart';
 import 'package:garden_hero/blocs/garden_list_bloc.dart';
+import 'package:garden_hero/blocs/plant_list_bloc.dart';
 import 'package:garden_hero/dialogs/new_garden_dialog.dart';
 import 'package:garden_hero/models/garden.dart';
-import 'package:garden_hero/garden/screens/plant_list_page.dart';
-
+import 'package:garden_hero/garden/screens/plant_page.dart';
+import 'package:garden_hero/pages/plant_list_page.dart';
 class GardenListPage extends StatelessWidget {
   GardenListPage();
 
@@ -71,7 +72,7 @@ class GardenListBody extends StatelessWidget {
         ],
       ),
     );
-  }
+}
 
   Widget _buildList(BuildContext context, GardenListBloc gardenListBloc, AsyncSnapshot<QuerySnapshot> snapshot) {
     return ListView.builder(
@@ -102,9 +103,18 @@ class GardenListBody extends StatelessWidget {
             elevation: 2.0,
             child: GestureDetector(
 	            onTap: () {
-                Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new PlantListPage(gardenId: garden.id,)),
+	              print(garden.id+" is tapped");
+                Navigator.push(
+                  context, //push plant page.
+                 // MaterialPageRoute(builder: (context) => new PlantPage(gardenId: garden.id,)),
+                  MaterialPageRoute(builder: (context) =>
+                    BlocProvider(
+                    bloc: PlantListBloc(garden.id),
+                    child: PlantListPage(gardenID: garden.id,),
+                  )
+                  ),
                 );
+
 
 	            },
               child: _buildGardenDisplay(context, garden, gardenListBloc)

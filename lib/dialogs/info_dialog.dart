@@ -10,7 +10,7 @@ class InfoDialog{
         content: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
-              plant,
+
               Text(description),
               Text(description),
               Text(description),

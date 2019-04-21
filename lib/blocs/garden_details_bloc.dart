@@ -6,6 +6,7 @@ import 'package:garden_hero/models/garden.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GardenDetailsBloc implements BlocBase {
+	var _deletedGarden = null;
 	final FirebaseUser user;
 	Garden _gardenToEdit;
 	Garden _deletedGarden;
