@@ -83,17 +83,14 @@ class PlantListBloc implements BlocBase{
   void _setBatch(Map<String, dynamic> data) async{
     bool b = await hasBatchData(gardenID);
     //keep b for debug rn.
-    if(data != null ){
-      Firestore.instance.collection("batch").document().setData(data);
-      print("document aded!!"+data.toString());
-      print("batch list length: "+batchList.length.toString());
+    if (data != null ){
+      Firestore.instance.collection("batch").document(data["id"]).setData(data);
     }
   }
 
   void _handleRemoveBatch(Map<String,dynamic> batch)async{
-    deletedBatch = batch;
-    await Firestore.instance.collection("batch").document("-LZpceZqCXiq5i5QSTMP2").delete();
-    print("batch:\t${batch["id"].toString()} removed from $gardenID");
+    await Firestore.instance.collection("batch").document(batch["id"]).delete();
+//    print("batch:\t${batch["id"].toString()} removed from $gardenID");
   }
 
   void _handleUndoRemove(Map<String, dynamic> data) {
