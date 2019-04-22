@@ -106,13 +106,8 @@ class _NewPlantDialogState extends State<AddPlantDialog> {
           ),
 
           IconButton(
-            icon: Icon(
-              Icons.date_range,
-              color: Colors.purpleAccent,
-            ),
-            onPressed: () {
-              _selectDate(context);
-            },
+            icon: Icon(Icons.date_range, color: Theme.of(context).accentColor,),
+            onPressed: () => _selectDate(context),
           ),
           Container(
             child: Slider(
@@ -121,18 +116,13 @@ class _NewPlantDialogState extends State<AddPlantDialog> {
               max: 30,
               min: 0,
               divisions: 30,
-              activeColor: Colors.greenAccent,
+              activeColor: Theme.of(context).primaryColor,
               inactiveColor: Colors.grey,
               label: widget.numPlants.toString(),
             ),
           ),
-
-          Card(
-              elevation: 3.0,
-              child: Text("date selected: $batchStr")),
-          Card(
-              elevation: 3.0,
-              child: Text("count: ${widget.numPlants.toString()}")),
+          Text("Date: $batchStr"),
+          Text("Count: ${widget.numPlants.toString()}"),
         ],
       ),
     );
@@ -158,9 +148,7 @@ class _NewPlantDialogState extends State<AddPlantDialog> {
                             IconButton(
                               alignment: Alignment.centerRight,
                               color: Colors.black12,
-                              icon: Icon(
-                                Icons.add,
-                              ),
+                              icon: Icon(Icons.add,),
                               onPressed: () {
                                 print("added\t$value");
                               },
@@ -168,9 +156,7 @@ class _NewPlantDialogState extends State<AddPlantDialog> {
                           ],
                         ));
                   }).toList(),
-                  onChanged: (String value) {
-                    _onTypeSwitched(value);
-                  },
+                  onChanged: (String value) =>_onTypeSwitched(value),
                 ),
               ),
             ],
@@ -224,41 +210,38 @@ class _NewPlantDialogState extends State<AddPlantDialog> {
         ),
         child: Card(
           child: Form(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Text("add Batch:")),
-                    flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text("New Batch",
+                      style: theme.textTheme.subhead,)
                   ),
-                  Container(child: _showBatch(context)),
-                  Container(
-                    child: RaisedButton(
-                      padding: const EdgeInsets.all(5.0),
-                      onPressed: () {
-
-
-                        setState(() {
-                         // widget._batch.fromMap(widget.toMap());
-                        // widget.id+=1;
-                       //   widget.d = widget.id.toString();
-                          widget._id = widget.gardenID+widget.id.toString();
-                          widget._batch = widget.toMap();
-                          widget.id++;
-
-                        });
-                        print("id:\t${widget._batch["id"]}\t"+widget.id.toString());
-                        widget.plantListBloc.inBatch.add(widget._batch);
-                        Navigator.pop(context);
-                      },
-                      child: Text("add batch", style: theme.textTheme.button),
+                  flex: 1,
+                ),
+                Container(child: _showBatch(context)),
+                Padding(
+	                padding: const EdgeInsets.all(10.0),
+	                child: RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        widget._id = widget.gardenID+widget.id.toString();
+                        widget._batch = widget.toMap();
+                        widget.id++;
+                      });
+                      print("id:\t${widget._batch["id"]}\t"+widget.id.toString());
+                      widget.plantListBloc.inBatch.add(widget._batch);
+                      Navigator.pop(context);
+                    },
+                    child: Text("Add",
+	                    style: theme.textTheme.button
                     ),
                   ),
-                ],
-              )),
+                ),
+              ],
+            )),
         ),
       ),
     );

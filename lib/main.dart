@@ -13,7 +13,8 @@ ThemeData theme = ThemeData(
 		title: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
 		subtitle: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
 		subhead: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-		body1: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)
+		body1: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+		button: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)
 	)
 );
 

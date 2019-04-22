@@ -12,10 +12,16 @@ class PlantListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  	TextStyle style = Theme.of(context).textTheme.title;
     return Scaffold(
         appBar: AppBar(
-          title: Text("Plants"),
+	        centerTitle: true,
+          elevation: 0,
+          title: Text("Plants",
+	          style: style.copyWith(color: Colors.white),
+          ),
         ),
+        backgroundColor: Theme.of(context).primaryColor,
         body: PlantListBody(
           gardenID: gardenID,
         ));
@@ -35,25 +41,22 @@ class PlantListBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final PlantListBloc plantListBloc = BlocProvider.of<PlantListBloc>(context);
 
-    return Center(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection("batch")
-                    .where("garden", isEqualTo: gardenID)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-            return _buildBatchList(context, plantListBloc, snapshot);
-                },
-              ),
+    return Container(
+      alignment: Alignment.center,
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: Firestore.instance
+                .collection("batch")
+                .where("garden", isEqualTo: gardenID)
+                .snapshots(),
+              builder: (context, snapshot)
+                => _buildBatchList(context, plantListBloc, snapshot),
             ),
-            Container(child: _buildIconButton(context, plantListBloc)),
-          ],
-        ),
+          ),
+          Container(child: _buildIconButton(context, plantListBloc)),
+        ],
       ),
     );
   }
@@ -114,41 +117,43 @@ void initPlantDatabase(PlantListBloc plantListBloc)async{
 
   Widget _buildBatchTile(BuildContext context, PlantListBloc plantListBloc,
       AsyncSnapshot<QuerySnapshot> snapshot, int index) {
+
+		ThemeData theme = Theme.of(context);
+
     Map<String, dynamic> test = snapshot.data.documents[index].data;
     String str = "";
     DateTime date = test["date"];
     _batchCount = snapshot.data.documents.length;
-    if(date != null){
+    if (date != null){
       str = "${date.month.toString()}/${date.day.toString()}/${date.year.toString()}";
     }else{
       str = "empty";
     }
-    return Container(
+    return Card(
+	    margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Card(
-          elevation: 4.0,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Card(
-                child: Text(test["id"].toString()),
+        padding: const EdgeInsets.symmetric(vertical: 15.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Text("${test["plantType"]} - Batch: $str", style: theme.textTheme.subhead,),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(test["count"].toString(),
+	                style: TextStyle(fontSize: 36),
               ),
-              Text(test["plantType"]),
-              Text(test["count"].toString()),
-              Text(test["phase"]),
-              Text(str),
-              IconButton(
-                onPressed: (){
-                  plantListBloc.inBatchRemove.add(test);
-                },
-                icon: Icon(Icons.close,
-                  color: Colors.redAccent,
-                ),
+            ),
+            Text(test["phase"]),
+            IconButton(
+              onPressed: (){
+                plantListBloc.inBatchRemove.add(test);
+              },
+              icon: Icon(Icons.close,
+                color: Colors.redAccent,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

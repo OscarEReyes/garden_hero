@@ -5,7 +5,6 @@ import 'package:garden_hero/blocs/garden_list_bloc.dart';
 import 'package:garden_hero/blocs/plant_list_bloc.dart';
 import 'package:garden_hero/dialogs/new_garden_dialog.dart';
 import 'package:garden_hero/models/garden.dart';
-import 'package:garden_hero/garden/screens/plant_page.dart';
 import 'package:garden_hero/pages/plant_list_page.dart';
 class GardenListPage extends StatelessWidget {
   GardenListPage();
