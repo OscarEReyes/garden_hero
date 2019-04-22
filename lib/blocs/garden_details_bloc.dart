@@ -9,7 +9,6 @@ class GardenDetailsBloc implements BlocBase {
 	var _deletedGarden = null;
 	final FirebaseUser user;
 	Garden _gardenToEdit;
-	Garden _deletedGarden;
 	final Set<Garden> _gardens = Set<Garden>();
 
 	GardenDetailsBloc(this.user) {
