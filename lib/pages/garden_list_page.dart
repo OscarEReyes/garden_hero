@@ -6,6 +6,7 @@ import 'package:garden_hero/blocs/plant_list_bloc.dart';
 import 'package:garden_hero/dialogs/new_garden_dialog.dart';
 import 'package:garden_hero/models/garden.dart';
 import 'package:garden_hero/pages/plant_list_page.dart';
+
 class GardenListPage extends StatelessWidget {
   GardenListPage();
 
@@ -15,11 +16,11 @@ class GardenListPage extends StatelessWidget {
 	    backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
 	      title: Text("Gardens",
-			      style: TextStyle(
-					      fontSize: 20,
-					      color: Colors.white,
-					      fontWeight: FontWeight.w600
-			      )
+		      style: TextStyle(
+			      fontSize: 20,
+			      color: Colors.white,
+			      fontWeight: FontWeight.w600
+		      )
 	      ),
 	      elevation: 0,
 	      centerTitle: true,
@@ -30,19 +31,17 @@ class GardenListPage extends StatelessWidget {
 }
 
 class GardenListBody extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final ScaffoldState state = Scaffold.of(context);
-    final GardenListBloc gardenListBloc = BlocProvider.of<GardenListBloc>(context);
-    gardenListBloc.errorStream.listen((error) => gardenListBloc.showErrorSnackbar(error, state));
+    final GardenListBloc _bloc = BlocProvider.of<GardenListBloc>(context);
+    _bloc.errorStream.listen((error) => _bloc.showErrorSnackbar(error, state));
 
     return Container(
 	    alignment: Alignment.center,
       decoration: BoxDecoration(
 	      gradient: LinearGradient(
-		      begin: Alignment.topCenter,
-		      end: Alignment.bottomCenter,
+		      begin: Alignment.topCenter, end: Alignment.bottomCenter,
 		      stops: [0.4, 0.9],
 		      colors: [
 		        Theme.of(context).primaryColor,
@@ -54,80 +53,132 @@ class GardenListBody extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection("gardens")
-                    .where("user", isEqualTo: gardenListBloc.user.uid)
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                      return _buildList(context, gardenListBloc, snapshot);
-                }),
+              stream: Firestore.instance
+                .collection("gardens")
+                .where("user", isEqualTo: _bloc.user.uid)
+                .snapshots(),
+              builder: (context, snapshot) =>
+	              GardenList(snapshot.data.documents,_bloc)
+              ),
             flex: 8,
           ),
           Padding(
 	          padding: EdgeInsets.all(25),
-            child: _buildIconButton(context, gardenListBloc),
+            child: AddButton(_bloc),
           )
         ],
       ),
     );
+	}
 }
 
-  Widget _buildList(BuildContext context, GardenListBloc gardenListBloc, AsyncSnapshot<QuerySnapshot> snapshot) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return _buildGardenWidget(context, gardenListBloc, snapshot, index);
-      },
-      itemCount: snapshot.data == null
-          ? 0
-          : snapshot.data.documents.length,
-    );
+class GardenList extends StatelessWidget {
+	final List<DocumentSnapshot> _gardens;
+	final GardenListBloc _bloc;
+
+	GardenList(this._gardens, this._bloc);
+
+  @override
+  Widget build(BuildContext context) {
+	  return ListView.builder(
+		  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+		  shrinkWrap: true,
+		  itemBuilder: (context, index) => GardenWidget(_bloc, _gardens, index),
+		  itemCount: _gardens == null
+			  ? 0
+			  : _gardens.length,
+	  );
   }
-  
-  Widget _buildGardenWidget(BuildContext context, GardenListBloc gardenListBloc, AsyncSnapshot<QuerySnapshot> snapshot, int index) {
-    Garden garden = Garden.fromMap(snapshot.data.documents[index].data);
+}
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Dismissible(
-          direction: DismissDirection.endToStart,
-          dismissThresholds: {
-            DismissDirection.endToStart : 0.7
-          },
-          background: stackBehindDismiss(),
-          key: ObjectKey(snapshot.data.documents[index]),
-          child: Card(
-            elevation: 2.0,
-            child: GestureDetector(
-	            onTap: () {
-	              print(garden.id+" is tapped");
-                Navigator.push(
-                  context, //push plant page.
-                 // MaterialPageRoute(builder: (context) => new PlantPage(gardenId: garden.id,)),
-                  MaterialPageRoute(builder: (context) =>
-                    BlocProvider(
-                    bloc: PlantListBloc(garden.id),
-                    child: PlantListPage(gardenID: garden.id,),
-                  )
-                  ),
-                );
+class GardenWidget extends StatelessWidget {
+	final GardenListBloc _bloc;
+	final List<DocumentSnapshot> _gardens;
+	final int _index;
 
+	GardenWidget(this._bloc,  this._gardens, this._index);
 
-	            },
-              child: _buildGardenDisplay(context, garden, gardenListBloc)
-            ),
-          ),
-          onDismissed: (direction) {
-            gardenListBloc.inRemoveGarden.add(garden);
-          },
-        ),
-    );
+	@override
+  Widget build(BuildContext context) {
+		  Garden garden = Garden.fromMap(_gardens[_index].data);
+
+		  return Padding(
+			  padding: const EdgeInsets.only(bottom: 5),
+			  child: Dismissible(
+				  direction: DismissDirection.endToStart,
+				  dismissThresholds: {DismissDirection.endToStart : 0.7},
+				  background: stackBehindDismiss(),
+				  key: ObjectKey(_gardens[_index]),
+				  child: Card(
+					  child: GestureDetector(
+							  onTap: () {
+								  Navigator.push(context, //push plant page.
+									  MaterialPageRoute(builder: (context) =>
+										  BlocProvider(
+											  bloc: PlantListBloc(garden.id),
+											  child: PlantListPage(gardenID: garden.id,),
+										  )
+									  ),
+								  );
+							  },
+							  child: GardenDisplay(garden, _bloc)
+					  ),
+				  ),
+				  onDismissed: (direction) => _bloc.inRemoveGarden.add(garden),
+			  ),
+		  );
+	  }
+
+  Widget stackBehindDismiss() {
+	  return Container(
+		  alignment: Alignment.centerRight,
+		  padding: const EdgeInsets.only(right: 20.0),
+		  color: Colors.red,
+		  child: const Icon(
+			  Icons.delete,
+			  color: Colors.white,
+		  ),
+	  );
   }
+}
 
-  Widget _buildGardenDisplay(BuildContext context, Garden garden, GardenListBloc gardenListBloc) {
-  	return ListTile(
+
+
+class AddButton extends StatelessWidget {
+	final GardenListBloc bloc;
+
+	AddButton(this.bloc);
+
+  @override
+  Widget build(BuildContext context) {
+	  return FloatingActionButton(
+		  mini: true,
+		  child:  Icon(Icons.add,
+			  color: Colors.white,
+		  ),
+		  onPressed: () async {
+			  Map<String, String> data = await showDialog(
+				  context: context,
+				  builder: (context) => NewGardenDialog("", ""),
+			  );
+			  bloc.inAddGarden.add(data);
+		  }
+	  );
+  }
+}
+
+
+
+class GardenDisplay extends StatelessWidget {
+	final Garden garden;
+	final GardenListBloc _bloc;
+
+	GardenDisplay(this.garden, this._bloc);
+
+  @override
+  Widget build(BuildContext context) {
+	  return ListTile(
+		  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
 		  leading: CircleAvatar(
 			  backgroundColor: Color.fromRGBO(230, 31, 111,1),
 			  child: Text(
@@ -140,54 +191,24 @@ class GardenListBody extends StatelessWidget {
 		  ),
 		  title: Text(garden.name,
 			  style: TextStyle(
-					  fontSize: 18.0,
-					  fontWeight: FontWeight.w700,
-					  color: Color.fromRGBO(28, 206, 100,1)
+				  fontSize: 18.0,
+				  fontWeight: FontWeight.w700,
+				  color: Color.fromRGBO(28, 206, 100,1)
 			  ),
 		  ),
-		  subtitle: Text(garden.description),
+		  subtitle: Text(garden.description,
+			  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
+		  ),
 		  trailing: IconButton(
-			  icon: Icon(Icons.edit),
-			  color: Color.fromRGBO(239, 66, 136,1),
+			  icon: const Icon(Icons.edit, color: Color.fromRGBO(239, 66, 136,1),),
 			  onPressed: () async {
 				  Map<String, String> data = await showDialog(
 					  context: context,
 					  builder: (context) => NewGardenDialog(garden.name, garden.description),
 				  );
-				  gardenListBloc.inGardenToEdit.add(garden);
-				  gardenListBloc.inEditGarden.add(data);
+				  _bloc.inGardenToEdit.add(garden);
+				  _bloc.inEditGarden.add(data);
 			  },
 		  ),
-	  );
-  }
-
-
-  Widget _buildIconButton(BuildContext context, GardenListBloc templateBloc) {
-    return IconButton(
-        icon: const Icon(
-          Icons.add,
-	        size: 40,
-	        color: Color.fromRGBO(196, 251, 218,1),
-        ),
-        onPressed: () async {
-          Map<String, String> data = await showDialog(
-            context: context,
-            builder: (context) => NewGardenDialog("", ""),
-          );
-          templateBloc.inAddGarden.add(data);
-        }
-    );
-  }
-
-  Widget stackBehindDismiss() {
-    return Container(
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.only(right: 20.0),
-      color: Colors.red,
-      child: const Icon(
-        Icons.delete,
-        color: Colors.white,
-      ),
-    );
-  }
+	  );  }
 }
