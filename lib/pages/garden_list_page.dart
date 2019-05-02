@@ -57,8 +57,12 @@ class GardenListBody extends StatelessWidget {
                 .collection("gardens")
                 .where("user", isEqualTo: _bloc.user.uid)
                 .snapshots(),
-              builder: (context, snapshot) =>
-	              GardenList(snapshot.data.documents,_bloc)
+              builder: (context, snapshot) {
+              	if (snapshot.hasData) {
+              		return  GardenList(snapshot.data.documents,_bloc);
+	              }
+              	return Container();
+              }
               ),
             flex: 8,
           ),

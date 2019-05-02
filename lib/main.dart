@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:garden_hero/models/db_client.dart';
 import './pages/login.dart';
+import 'package:sqlcool/sqlcool.dart';
 
 
-void main() => runApp(MyApp());
+
+void main() {
+	DatabaseClient db = DatabaseClient();
+
+	runApp(MyApp());
+}
 
 ThemeData theme = ThemeData(
 	fontFamily: "Source_Sans_Pro",

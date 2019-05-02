@@ -49,23 +49,16 @@ class _NewGardenDialogState extends State<NewGardenDialog> {
             maxHeight: size.height * 0.5,
             maxWidth: size.width * 0.9
         ),
-        child: Card(
+        child: Material(
 	        color: Colors.transparent,
           child: Container(
 	          decoration: BoxDecoration(
-			          gradient: LinearGradient(
-					          stops: [0.2, 0.95],
-					          begin: Alignment.topCenter,
-					          end: Alignment.bottomCenter,
-					          colors: [
-						          theme.primaryColor.withOpacity(0.7),
-						          theme.accentColor.withOpacity(0.7)
-					          ]
-			          )
+		          color: theme.primaryColor.withOpacity(0.95),
+		          borderRadius: BorderRadius.all(Radius.circular(15)),
 	          ),
             child: Form(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: const EdgeInsets.symmetric(horizontal: 35.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[

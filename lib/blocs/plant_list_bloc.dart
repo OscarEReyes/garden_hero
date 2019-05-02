@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:garden_hero/blocs/bloc_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:garden_hero/models/Batch.dart';
+import 'package:garden_hero/dialogs/add_plant_dialog.dart';
+import 'package:garden_hero/models/db_client.dart';
 import 'package:garden_hero/models/plant.dart';
-import 'package:garden_hero/blocs/bloc_provider.dart';
-import 'package:garden_hero/models/garden.dart';
+import 'package:garden_hero/pages/plant_info_page.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sqlcool/sqlcool.dart';
+
 class PlantListBloc implements BlocBase{
   List<Map<String,dynamic>> batchList;
   Map<String,dynamic> deletedBatch;
@@ -71,12 +73,11 @@ class PlantListBloc implements BlocBase{
     return false;
   }
 
-  void _initPlantDb(Map<String, dynamic> data) async{
+  void _initPlantDb(Map<String, dynamic> data) async {
     bool b = await hasPlantData(gardenID);
    // print("initPlantDb called!!!!! \t garden: "+gardenID+"\thasData: "+b.toString());
     if(data != null && (!b)){
       Firestore.instance.collection("plants").document().setData(data);
-      print("document aded!!"+data.toString());
     }
   }
 
@@ -84,11 +85,51 @@ class PlantListBloc implements BlocBase{
     bool b = await hasBatchData(gardenID);
     //keep b for debug rn.
     if (data != null ){
-      Firestore.instance.collection("batch").document(data["id"]).setData(data);
+    	String id = gardenID + DateTime.now().millisecondsSinceEpoch.toString();
+    	data["id"] = id;
+      Firestore.instance.collection("batch")
+        .document(id)
+        .setData(data);
     }
   }
+  void handleGoToInfoPage(BuildContext context, String name) {
+	  DatabaseClient db = DatabaseClient();
+	  String query = "name LIKE '%${name}%'";
+	  db.db.then((Db d) {
+		  d.select(table: "plant", limit: 1, where: query).then((
+				  List<Map<String, dynamic>> data) {
+		  	    MaterialPageRoute route = MaterialPageRoute(
+				      builder: (context) {
+				      	return PlantInfoPage(data[0]);
+				      }
+			      );
+			      Navigator.of(context).push(route);
+		  });
+	  });
+  }
 
-  void _handleRemoveBatch(Map<String,dynamic> batch)async{
+  void handleAddBatch(BuildContext context) async {
+  	List<String> _types = [];
+    DatabaseClient db = DatabaseClient();
+    db.db.then((Db d) {
+      d.select(table: "plant", columns: "name", limit: 20).then((List<Map<String, dynamic>> data) {
+        for (Map<String, dynamic> thing in data) {
+          _types.add(thing["name"]);
+        }
+        showDialog(
+		        context: context,
+		        builder: (context) => AddPlantDialog(
+				        gardenID,
+				        this,
+				        _types
+		        ));
+      });
+      });
+
+
+  }
+
+  void _handleRemoveBatch(Map<String,dynamic> batch) async {
     await Firestore.instance.collection("batch").document(batch["id"]).delete();
 //    print("batch:\t${batch["id"].toString()} removed from $gardenID");
   }
