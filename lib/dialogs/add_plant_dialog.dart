@@ -165,7 +165,7 @@ class _NewPlantDialogState extends State<AddPlantDialog> {
             items: widget._typeList.map((String value) {
               return DropdownMenuItem(
                 value: value,
-                child: Text("$value"));
+                child: Text("${value.trim()}"));
             }).toList(),
             onChanged: (String value) =>_onTypeSwitched(value),
           ),

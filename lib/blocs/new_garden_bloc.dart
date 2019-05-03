@@ -32,7 +32,7 @@ class NewGardenBloc extends Object with NameValidator, DescriptionValidator impl
 
   @override
   void dispose() {
-    _nameController?.close();
-    _descriptionController?.close();
+//    _nameController?.close();
+//    _descriptionController?.close();
   }
 }

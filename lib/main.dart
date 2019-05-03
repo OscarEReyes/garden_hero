@@ -12,7 +12,7 @@ void main() {
 }
 
 ThemeData theme = ThemeData(
-	fontFamily: "Source_Sans_Pro",
+	fontFamily: "Montserrat",
 	primaryColor: Color.fromRGBO(61, 223, 127, 1),
 	buttonColor: Color.fromRGBO(61, 223, 127, 1),
 	accentColor: Color.fromRGBO(239, 66, 136,1),

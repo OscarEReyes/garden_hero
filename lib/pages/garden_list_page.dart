@@ -13,8 +13,10 @@ class GardenListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+	    resizeToAvoidBottomPadding: false,
 	    backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
+	      backgroundColor: Color.fromRGBO(97, 235, 153, 1),
 	      title: Text("Gardens",
 		      style: TextStyle(
 			      fontSize: 20,
@@ -32,9 +34,9 @@ class GardenListPage extends StatelessWidget {
 
 class GardenListBody extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    final ScaffoldState state = Scaffold.of(context);
-    final GardenListBloc _bloc = BlocProvider.of<GardenListBloc>(context);
+  Widget build(BuildContext mainContext) {
+    final ScaffoldState state = Scaffold.of(mainContext);
+    final GardenListBloc _bloc = BlocProvider.of<GardenListBloc>(mainContext);
     _bloc.errorStream.listen((error) => _bloc.showErrorSnackbar(error, state));
 
     return Container(
@@ -44,7 +46,7 @@ class GardenListBody extends StatelessWidget {
 		      begin: Alignment.topCenter, end: Alignment.bottomCenter,
 		      stops: [0.4, 0.9],
 		      colors: [
-		        Theme.of(context).primaryColor,
+		        Theme.of(mainContext).primaryColor,
 			      Color.fromRGBO(28, 206, 100, 1)
 		      ]
 	      )
@@ -83,14 +85,28 @@ class GardenList extends StatelessWidget {
 	GardenList(this._gardens, this._bloc);
 
   @override
-  Widget build(BuildContext context) {
-	  return ListView.builder(
-		  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-		  shrinkWrap: true,
-		  itemBuilder: (context, index) => GardenWidget(_bloc, _gardens, index),
-		  itemCount: _gardens == null
-			  ? 0
-			  : _gardens.length,
+  Widget build(BuildContext mainContext) {
+	  return Container(
+		  decoration: BoxDecoration(
+			  gradient: LinearGradient(
+				  begin: Alignment.topCenter,
+				  end: Alignment.bottomCenter,
+				  stops: [0.1, 0.9],
+				  colors: [
+					  Color.fromRGBO(97, 235, 153, 1),
+					  Color.fromRGBO(28, 206, 100,1),
+				  ]
+			  )
+		  ),
+	    child: ListView.builder(
+			  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+			  shrinkWrap: true,
+			  itemBuilder: (mainContext, index) => GardenWidget(_bloc, _gardens, index),
+			  itemCount: _gardens == null
+				  ? 0
+				  : _gardens.length,
+
+	    ),
 	  );
   }
 }
@@ -103,7 +119,7 @@ class GardenWidget extends StatelessWidget {
 	GardenWidget(this._bloc,  this._gardens, this._index);
 
 	@override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext mainContext) {
 		  Garden garden = Garden.fromMap(_gardens[_index].data);
 
 		  return Padding(
@@ -116,7 +132,7 @@ class GardenWidget extends StatelessWidget {
 				  child: Card(
 					  child: GestureDetector(
 							  onTap: () {
-								  Navigator.push(context, //push plant page.
+								  Navigator.push(mainContext, //push plant page.
 									  MaterialPageRoute(builder: (context) =>
 										  BlocProvider(
 											  bloc: PlantListBloc(garden.id),
@@ -125,7 +141,40 @@ class GardenWidget extends StatelessWidget {
 									  ),
 								  );
 							  },
-							  child: GardenDisplay(garden, _bloc)
+							  child: ListTile(
+								  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+								  leading: CircleAvatar(
+									  backgroundColor: Color.fromRGBO(230, 31, 111,1),
+									  child: Text(
+										  garden.count.toString(),
+										  style: TextStyle(
+												  fontSize: 18,
+												  fontWeight: FontWeight.w600,
+												  color: Colors.white),
+									  ),
+								  ),
+								  title: Text(garden.name,
+									  style: TextStyle(
+											  fontSize: 18.0,
+											  fontWeight: FontWeight.w700,
+											  color: Color.fromRGBO(28, 206, 100,1)
+									  ),
+								  ),
+								  subtitle: Text(garden.description,
+									  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
+								  ),
+								  trailing: IconButton(
+									  icon: const Icon(Icons.edit, color: Color.fromRGBO(239, 66, 136,1),),
+									  onPressed: () async {
+										  Map<String, String> data = await showDialog(
+											  context: mainContext,
+											  builder: (mainContext) => NewGardenDialog(garden.name, garden.description),
+										  );
+										  _bloc.inGardenToEdit.add(garden);
+										  _bloc.inEditGarden.add(data);
+									  },
+								  ),
+							  )
 					  ),
 				  ),
 				  onDismissed: (direction) => _bloc.inRemoveGarden.add(garden),
@@ -169,50 +218,4 @@ class AddButton extends StatelessWidget {
 		  }
 	  );
   }
-}
-
-
-
-class GardenDisplay extends StatelessWidget {
-	final Garden garden;
-	final GardenListBloc _bloc;
-
-	GardenDisplay(this.garden, this._bloc);
-
-  @override
-  Widget build(BuildContext context) {
-	  return ListTile(
-		  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-		  leading: CircleAvatar(
-			  backgroundColor: Color.fromRGBO(230, 31, 111,1),
-			  child: Text(
-				  garden.count.toString(),
-				  style: TextStyle(
-					  fontSize: 18,
-					  fontWeight: FontWeight.w600,
-					  color: Colors.white),
-			  ),
-		  ),
-		  title: Text(garden.name,
-			  style: TextStyle(
-				  fontSize: 18.0,
-				  fontWeight: FontWeight.w700,
-				  color: Color.fromRGBO(28, 206, 100,1)
-			  ),
-		  ),
-		  subtitle: Text(garden.description,
-			  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
-		  ),
-		  trailing: IconButton(
-			  icon: const Icon(Icons.edit, color: Color.fromRGBO(239, 66, 136,1),),
-			  onPressed: () async {
-				  Map<String, String> data = await showDialog(
-					  context: context,
-					  builder: (context) => NewGardenDialog(garden.name, garden.description),
-				  );
-				  _bloc.inGardenToEdit.add(garden);
-				  _bloc.inEditGarden.add(data);
-			  },
-		  ),
-	  );  }
 }

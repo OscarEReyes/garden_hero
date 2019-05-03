@@ -30,10 +30,11 @@ class _NewGardenDialogState extends State<NewGardenDialog> {
   }
 
   @override dispose() {
-    _newGardenBloc?.dispose();
-    _nameController?.dispose();
-    _descriptionController?.dispose();
-    super.dispose();
+  	super.dispose();
+//    _newGardenBloc?.dispose();
+//    _nameController?.dispose();
+//    _descriptionController?.dispose();
+//    super.dispose();
   }
 
   @override
@@ -63,7 +64,10 @@ class _NewGardenDialogState extends State<NewGardenDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     const SizedBox(height: 5.0,),
-                    Text("New Garden", style: theme.textTheme.title.copyWith(color: Colors.white),),
+                    Text("New Garden",
+	                    style: theme.textTheme.title
+			                    .copyWith(color: Colors.white),
+                    ),
                     NameField(_nameController, _newGardenBloc),
                     DescriptionField(_descriptionController, _newGardenBloc),
                     _buildAddFieldButton(theme),
@@ -80,22 +84,21 @@ class _NewGardenDialogState extends State<NewGardenDialog> {
   _buildAddFieldButton(ThemeData data) {
     return StreamBuilder<bool>(
         stream: _newGardenBloc.fieldValid,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        builder: (BuildContext c, AsyncSnapshot<bool> snapshot) {
           return RaisedButton(
+	          color: Theme.of(context).accentColor,
             padding: const EdgeInsets.all(10.0),
             child: Text('Add Field',
               style: data.textTheme.button,
             ),
             onPressed: (snapshot.hasData && snapshot.data == true)
                 ? ()  {
-              Map<String, String> data = {
-                "name" : _nameController.text,
-                "description" : _descriptionController.text
-              };
-              Navigator.of(context).pop((
-                  data
-              ));
-            }
+			              Map<String, String> data = {
+			                "name" : _nameController.text,
+			                "description" : _descriptionController.text
+			              };
+			              Navigator.of(context).pop((data));
+			            }
                 : null,
           );
         });
@@ -113,7 +116,7 @@ class NameField extends StatelessWidget {
   	ThemeData theme = Theme.of(context);
 	  return StreamBuilder<String>(
 			  stream: _bloc.name,
-			  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+			  builder: (BuildContext c, AsyncSnapshot<String> snapshot) {
 				  return Padding(
 					  padding: const EdgeInsets.all(8.0),
 					  child: TextField(
@@ -150,7 +153,7 @@ class DescriptionField extends StatelessWidget {
 
 	  return StreamBuilder<String>(
 			  stream: _bloc.description,
-			  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+			  builder: (c, snapshot) {
 				  return Padding(
 					  padding: const EdgeInsets.all(8.0),
 					  child: TextField(

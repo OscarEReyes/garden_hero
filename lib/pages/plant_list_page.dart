@@ -171,6 +171,26 @@ class PlantListBody extends StatelessWidget {
 		          ),
 	          ),
               Text(test["phase"]),
+	            Padding(
+	              padding: const EdgeInsets.all(15.0),
+	              child: Row(
+		            children: <Widget>[
+		            	RaisedButton(
+		            	  onPressed: () {},
+		            	  child: SizedBox(
+				              height: 40,
+				              width: 75,
+		            	    child: Row(
+				                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+				                children: <Widget>[
+				                	Icon(Icons.bug_report, color: theme.accentColor,),
+				                  Text("Pest", style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w800),)],
+			                )
+		            	  ),
+		            	)
+		            ],
+	              ),
+	            )
             ],
           ),
         ),
@@ -179,3 +199,11 @@ class PlantListBody extends StatelessWidget {
 
   }
 }
+
+class PestDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
