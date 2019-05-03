@@ -25,89 +25,63 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     FirebaseAuth.instance.currentUser().then(
             (FirebaseUser user) async {
-          if (user != null) {
-            Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (context)
-                  => BlocProvider(
-                    bloc: GardenListBloc(user),
-                    child: GardenListPage(),
-                  )
-                  )
-                );
-          }
+
         }
     );
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Sign In'),
-      ),
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints.expand(
-                  width: 250.0,
-                  height: 250.0,
-                ),
-                child: Container(
-                  color: Colors.cyan[100].withOpacity(0.7),
-                ),
-              ),
-            ),
-            Center(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 5.0,
-                  sigmaY: 5.0,
-                ),
-                child: Container(
-                  width: 250.0,
-                  height: 250.0,
-                  color: Colors.grey[100].withOpacity(0.2),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Text("Login to the App!",
-                        style: const TextStyle(
-                          color: Colors.black54,
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      FlatButton(
-                        color: Colors.black54,
-                        onPressed: () async {
-                          bool b = await _loginUser();
 
-                          b
-                            ? await checkUser(context)
-                              .then((user) => Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(builder: (context)
-                                  => BlocProvider(
-                                    bloc: GardenListBloc(user),
-                                    child: GardenListPage(),
-                                  )
-                                )
-                              )
-                            )
-                            : Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Wrong Email.'),
-                                ),
-                              );
-                        },
-                        textColor: Colors.white.withOpacity(0.5),
-                        child: Text('Sign In.'),
-                      )
-                    ],
-                  ),
+      body: Center(
+        child: Container(
+	        width: MediaQuery.of(context).size.width,
+          decoration:  BoxDecoration(
+            color: Colors.grey[100].withOpacity(0.2),
+
+            image:  DecorationImage(
+              image:  AssetImage("assets/background.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Login!",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: FlatButton(
+                  color: Theme.of(context).accentColor,
+                  onPressed: () async {
+                    bool b = await _loginUser();
+
+                    b
+                      ? await checkUser(context)
+                        .then((user) => Navigator.of(context)
+                          .pushReplacement(MaterialPageRoute(builder: (context)
+                            => BlocProvider(
+                              bloc: GardenListBloc(user),
+                              child: GardenListPage(),
+                            )
+                          )
+                        )
+                      )
+                      : Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Wrong Email.'),
+                          ),
+                        );
+                  },
+                  textColor: Colors.white,
+                  child: Text('Sign In.'),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
