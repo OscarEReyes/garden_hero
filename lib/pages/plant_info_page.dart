@@ -78,6 +78,17 @@ class PlantInfoPage extends StatelessWidget {
 					      ],
 				        ),
 				      ),
+			        Card(
+				        child: ExpansionTile(
+					        title: Text("HARVESTING", style: title,),
+					        children: <Widget>[
+						        Padding(
+							        padding: const EdgeInsets.all(8.0),
+							        child: Text(data["harvest"], style: style,),
+						        ),
+					        ],
+				        ),
+			        ),
 				      Card(
 				        child: ExpansionTile(
 					      title: Text("DISEASES", style: title,),
