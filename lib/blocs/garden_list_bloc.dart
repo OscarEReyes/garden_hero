@@ -103,8 +103,14 @@ class GardenListBloc implements BlocBase {
                 })
         )
     );
+    sleep1().then((value) {
+	    state.removeCurrentSnackBar();
+    });
   }
 
+  Future sleep1() {
+	  return new Future.delayed(const Duration(seconds: 2), () => "1");
+  }
 
 
   void dispose(){

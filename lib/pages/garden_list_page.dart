@@ -153,12 +153,13 @@ class GardenWidget extends StatelessWidget {
 													      .where('garden', isEqualTo: garden.id).snapshots(),
 											      builder: (context, snapshot) {
 												      if (snapshot.data == null) {
-													      return CircleAvatar();
+													      return CircleAvatar(backgroundColor: Theme.of(context).accentColor, child: Text("0"),);
 												      }
 
 												      int count = 0;
 												      for (DocumentSnapshot doc in snapshot.data.documents) {
-													      count += doc.data["count"].toInt();
+												      	if (doc.data["count"] != null)
+													        count += doc.data["count"].toInt();
 												      }
 												      return Padding(
 													      padding: const EdgeInsets.only(top: 10, bottom: 25.0),
