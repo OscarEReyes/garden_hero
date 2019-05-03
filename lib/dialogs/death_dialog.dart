@@ -139,7 +139,7 @@ class _NewPlantDialogState extends State<DeathDialog> {
 								children: <Widget>[
 									Padding(
 											padding: const EdgeInsets.only(top: 25,bottom: 25),
-											child: Text("Set Number of Plants with Pest",
+											child: Text("Journal Death Plants",
 												style: theme.textTheme.subhead
 														.copyWith(color: Colors.white),)
 									),
