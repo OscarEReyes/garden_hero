@@ -184,7 +184,8 @@ class PlantListBody extends StatelessWidget {
 	              padding: const EdgeInsets.only(top: 10.0),
 	              child: Text("Water given this week"),
 	            ),
-	            Text("${waterForPlant[batchData["plantType"].toString()]} ounces required"),
+	            Text("${batchData["water"]} fluid ounces per plant"),
+
 	            Slider(
 		            value: batchData["water"].toDouble(),
 		            label: batchData["water"].toString(),
@@ -193,7 +194,8 @@ class PlantListBody extends StatelessWidget {
 		            divisions: waterForPlant[batchData["plantType"]] > 10 ? 10 : waterForPlant[batchData["plantType"]],
 		            onChanged: (double value) {plantListBloc.handleWater(value, batchData["id"]);},
 	            ),
-	            Text("${batchData["water"]} fluid ounces per plant"),
+	            Text("${waterForPlant[batchData["plantType"].toString()]} ounces required per plant"),
+
 	            Row(
 		            mainAxisAlignment: MainAxisAlignment.center,
 		            children: <Widget>[
