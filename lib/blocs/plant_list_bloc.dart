@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:garden_hero/blocs/bloc_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -125,9 +127,36 @@ class PlantListBloc implements BlocBase{
 		        ));
       });
       });
-
-
   }
+
+  void handleSetSick(double count, String batch) async {
+	  Firestore.instance
+			  .collection('batch')
+			  .document(batch)
+			  .updateData(
+			  {
+				  "pest" : count
+			  }
+	  );
+  }
+
+  void handleDeath(double count, double pest, double deathCount ,double death, double deathByPest, String batch) async {
+		if (pest > 0) {
+			pest = max(0, pest - deathByPest);
+		}
+
+	  Firestore.instance
+			  .collection('batch')
+			  .document(batch)
+			  .updateData(
+			  {
+				  "count" : count - death - deathByPest,
+				  "death" : deathCount + deathByPest + death,
+				  "pest" : pest
+			  }
+	  );
+  }
+
 
   void _handleRemoveBatch(Map<String,dynamic> batch) async {
     await Firestore.instance.collection("batch").document(batch["id"]).delete();

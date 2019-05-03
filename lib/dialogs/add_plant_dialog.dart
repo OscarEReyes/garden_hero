@@ -212,8 +212,8 @@ class _NewPlantDialogState extends State<AddPlantDialog> {
 					      end: Alignment.bottomCenter,
 					      stops: [0.2, 0.7],
 					      colors: [
-						      Color.fromRGBO(97, 235, 153, 1),
-						      Color.fromRGBO(28, 206, 100,1),
+						      Color.fromRGBO(97, 235, 153, 0.9),
+						      Color.fromRGBO(28, 206, 100,.9),
 					      ]
 			      )
 	      ),
