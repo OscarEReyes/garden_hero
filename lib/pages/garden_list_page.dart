@@ -130,6 +130,7 @@ class GardenWidget extends StatelessWidget {
 				  background: stackBehindDismiss(),
 				  key: ObjectKey(_gardens[_index]),
 				  child: Card(
+					  margin: EdgeInsets.symmetric(horizontal: 10),
 					  child: GestureDetector(
 							  onTap: () {
 								  Navigator.push(mainContext, //push plant page.
@@ -141,39 +142,66 @@ class GardenWidget extends StatelessWidget {
 									  ),
 								  );
 							  },
-							  child: ListTile(
-								  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-								  leading: CircleAvatar(
-									  backgroundColor: Color.fromRGBO(230, 31, 111,1),
-									  child: Text(
-										  garden.count.toString(),
+							  child: Column(
+							    children: [
+							    	Padding(
+							    	  padding: const EdgeInsets.only(top: 10, left: 10.0),
+							    	  child: ListTile(
+									      leading: StreamBuilder<QuerySnapshot>(
+											      stream: Firestore.instance
+													      .collection('batch')
+													      .where('garden', isEqualTo: garden.id).snapshots(),
+											      builder: (context, snapshot) {
+												      if (snapshot.data == null) {
+													      return CircleAvatar();
+												      }
+
+												      int count = 0;
+												      for (DocumentSnapshot doc in snapshot.data.documents) {
+													      count += doc.data["count"].toInt();
+												      }
+												      return Padding(
+													      padding: const EdgeInsets.only(top: 10, bottom: 25.0),
+													      child: CircleAvatar(
+														      radius: 22,
+														      backgroundColor: Theme.of(context).accentColor,
+														      child: Text(
+															      "${count.toString()}",
+															      style: TextStyle(
+																	      fontSize: 18,
+																	      fontWeight: FontWeight.w400,
+																	      color: Colors.white),
+														      ),
+													      ),
+												      );
+											      }
+									      ),
+									  contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+									  title: Text(garden.name,
 										  style: TextStyle(
-												  fontSize: 18,
-												  fontWeight: FontWeight.w600,
-												  color: Colors.white),
+												  fontSize: 24.0,
+												  fontWeight: FontWeight.w700,
+												  color: Color.fromRGBO(28, 206, 100,1)
+										  ),
 									  ),
-								  ),
-								  title: Text(garden.name,
-									  style: TextStyle(
-											  fontSize: 18.0,
-											  fontWeight: FontWeight.w700,
-											  color: Color.fromRGBO(28, 206, 100,1)
+									  subtitle: Text(garden.description,
+										  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
 									  ),
-								  ),
-								  subtitle: Text(garden.description,
-									  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
-								  ),
-								  trailing: IconButton(
-									  icon: const Icon(Icons.edit, color: Color.fromRGBO(239, 66, 136,1),),
-									  onPressed: () async {
-										  Map<String, String> data = await showDialog(
-											  context: mainContext,
-											  builder: (mainContext) => NewGardenDialog(garden.name, garden.description),
-										  );
-										  _bloc.inGardenToEdit.add(garden);
-										  _bloc.inEditGarden.add(data);
-									  },
-								  ),
+									  trailing: IconButton(
+										  icon: const Icon(Icons.edit, color: Color.fromRGBO(239, 66, 136,1),),
+										  onPressed: () async {
+											  Map<String, String> data = await showDialog(
+												  context: mainContext,
+												  builder: (mainContext) => NewGardenDialog(garden.name, garden.description),
+											  );
+											  _bloc.inGardenToEdit.add(garden);
+											  _bloc.inEditGarden.add(data);
+										  },
+									  ),
+								    ),
+							    	),
+
+					  ]
 							  )
 					  ),
 				  ),
