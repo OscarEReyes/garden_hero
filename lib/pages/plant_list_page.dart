@@ -153,7 +153,7 @@ class PlantListBody extends StatelessWidget {
 		    );
 	    },
       child: Card(
-	    margin: EdgeInsets.symmetric(horizontal: 2.0, vertical: 5),
+	    margin: EdgeInsets.symmetric(horizontal: 2.0, vertical: 0),
         elevation: 2,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -167,9 +167,9 @@ class PlantListBody extends StatelessWidget {
 	              ),
 	            ),
 	            Padding(
-	              padding: const EdgeInsets.only(bottom: 10.0),
+	              padding: const EdgeInsets.only(bottom: 0.0),
 	              child: Text("${batchData["plantType"].toString().toUpperCase()}",
-		            style: theme.textTheme.subhead.copyWith(fontSize: 32, color: theme.accentColor),
+		            style: theme.textTheme.subhead.copyWith(fontSize: 24, color: theme.accentColor),
 		            textAlign: TextAlign.center,
 	              ),
 	            ),
@@ -182,9 +182,11 @@ class PlantListBody extends StatelessWidget {
 	          ),
 	            Padding(
 	              padding: const EdgeInsets.only(top: 10.0),
-	              child: Text("Water given this week"),
+	              child: Text("Water given this week",
+		              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+
+	              ),
 	            ),
-	            Text("${batchData["water"]} fluid ounces per plant"),
 
 	            Slider(
 		            value: batchData["water"].toDouble(),
@@ -194,7 +196,10 @@ class PlantListBody extends StatelessWidget {
 		            divisions: waterForPlant[batchData["plantType"]] > 10 ? 10 : waterForPlant[batchData["plantType"]],
 		            onChanged: (double value) {plantListBloc.handleWater(value, batchData["id"]);},
 	            ),
-	            Text("${waterForPlant[batchData["plantType"].toString()]} ounces required per plant"),
+	            Text("${batchData["water"]} fluid ounces per plant",
+
+	            ),
+
 
 	            Row(
 		            mainAxisAlignment: MainAxisAlignment.center,
@@ -226,13 +231,19 @@ class PlantListBody extends StatelessWidget {
 										            color: theme.accentColor,
 										            fontSize: 40
 								            ),
-							            )
+							            ),
+
 						            ],
 						            )
 						            : Container(width: 0),
 			            ),
 		            ],
 	            ),
+	            Text("${waterForPlant[batchData["plantType"].toString()]} ounces required per plant",
+		            style: TextStyle(color: theme.accentColor,
+		            ),
+	            ),
+
 	            Padding(
 	              padding: const EdgeInsets.all(15.0),
 	              child: Row(
@@ -259,7 +270,8 @@ class PlantListBody extends StatelessWidget {
 			                ),
 			              ),
 
-				            RaisedButton(
+
+			              RaisedButton(
 					            onPressed: () {
 					              double pest = batchData["pest"] != null ? batchData["pest"] : 0;
 						            double death = batchData["death"] != null ? batchData["death"] : 0;
