@@ -113,22 +113,33 @@ class PlantListBloc implements BlocBase{
   void handleAddBatch(BuildContext context) async {
   	List<String> _types = [];
     DatabaseClient db = DatabaseClient();
-    db.db.then((Db d) {
-      d.select(table: "plant", columns: "name", limit: 20).then((List<Map<String, dynamic>> data) {
-        for (Map<String, dynamic> thing in data) {
-          _types.add(thing["name"]);
-        }
-        showDialog(
-		        context: context,
-		        builder: (context) => AddPlantDialog(
-				        gardenID,
-				        this,
-				        _types
-		        ));
-      });
+	    db.db.then((Db d) {
+	      d.select(table: "plant", columns: "name", limit: 20).then((List<Map<String, dynamic>> data) {
+	        for (Map<String, dynamic> thing in data) {
+	          _types.add(thing["name"]);
+	        }
+	        showDialog(
+			        context: context,
+			        builder: (context) => AddPlantDialog(
+					        gardenID,
+					        this,
+					        _types
+			        ));
+	      });
       });
   }
 
+
+	void handleWater(double water,String batch) {
+		Firestore.instance
+				.collection('batch')
+				.document(batch)
+				.updateData(
+				{
+					"water" : water
+				}
+		);
+	}
   void handleSetSick(double count, String batch) async {
 	  Firestore.instance
 			  .collection('batch')

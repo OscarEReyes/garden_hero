@@ -22,6 +22,7 @@ class AddPlantDialog extends StatefulWidget {
 
   Map<String, dynamic> toMap() {
     Map<String,dynamic> data  ={
+    	'water': 0,
       'garden':gardenID,
       'plantType':_plantType,
       'phase': _phaseType,

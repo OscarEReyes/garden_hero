@@ -121,6 +121,16 @@ class PlantListBody extends StatelessWidget {
       DocumentSnapshot doc) {
 		ThemeData theme = Theme.of(context);
 
+		Map<String, int> waterForPlant = {
+			"basil" : 8,
+			"potatoes" : 1,
+			"onions" : 1,
+			"carrots" : 1,
+			"tomatoes" : 4,
+			"watermelons" : 55,
+			"lemons-oranges" : 55
+		};
+
     Map<String, dynamic> batchData = doc.data;
 
 		int healthy = batchData["count"].round();
@@ -147,6 +157,7 @@ class PlantListBody extends StatelessWidget {
         elevation: 2,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
 	            Container(
 		            alignment: Alignment.topRight,
@@ -162,17 +173,27 @@ class PlantListBody extends StatelessWidget {
 		            textAlign: TextAlign.center,
 	              ),
 	            ),
-	          Text("Batch: $str",
+	          Text("Planted On: $str",
 		          style: TextStyle(
 			          fontStyle: FontStyle.italic,
 			          fontSize: 18,
 			          fontWeight: FontWeight.w100
 		          ),
 	          ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(batchData["phase"]),
-            ),
+	            Padding(
+	              padding: const EdgeInsets.only(top: 10.0),
+	              child: Text("Water given this week"),
+	            ),
+	            Text("${waterForPlant[batchData["plantType"].toString()]} ounces required"),
+	            Slider(
+		            value: batchData["water"].toDouble(),
+		            label: batchData["water"].toString(),
+		            min: 0,
+		            max: waterForPlant[batchData["plantType"].toString().trim()].toDouble(),
+		            divisions: waterForPlant[batchData["plantType"]] > 10 ? 10 : waterForPlant[batchData["plantType"]],
+		            onChanged: (double value) {plantListBloc.handleWater(value, batchData["id"]);},
+	            ),
+	            Text("${batchData["water"]} fluid ounces per plant"),
 	            Row(
 		            mainAxisAlignment: MainAxisAlignment.center,
 		            children: <Widget>[
